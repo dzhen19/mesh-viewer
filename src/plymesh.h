@@ -10,19 +10,26 @@
 #include "agl/aglm.h"
 #include "agl/mesh/triangle_mesh.h"
 
-namespace agl {
+struct Vertex
+{
+   float x;
+   float y;
+   float z;
+};
+
+namespace agl
+{
    class PLYMesh : public TriangleMesh
    {
    public:
-
-      PLYMesh(const std::string& filename);
+      PLYMesh(const std::string &filename);
       PLYMesh();
 
       virtual ~PLYMesh();
 
       // Initialize this object with the given file
       // Returns true if successfull. false otherwise.
-      bool load(const std::string& filename);
+      bool load(const std::string &filename);
 
       // Return the minimum point of the axis-aligned bounding box
       glm::vec3 minBounds() const;
@@ -34,22 +41,21 @@ namespace agl {
       int numVertices() const;
 
       // Positions in this model
-      const std::vector<GLfloat>& positions() const;
+      const std::vector<GLfloat> &positions() const;
 
       // Positions in this model
-      const std::vector<GLfloat>& normals() const;
+      const std::vector<GLfloat> &normals() const;
 
       // Return number of faces in this model
       int numTriangles() const;
 
       // face indices in this model
-      const std::vector<GLuint>& indices() const;
+      const std::vector<GLuint> &indices() const;
 
    protected:
       void init();
 
    protected:
-
       std::vector<GLfloat> _positions;
       std::vector<GLfloat> _normals;
       std::vector<GLuint> _faces;
