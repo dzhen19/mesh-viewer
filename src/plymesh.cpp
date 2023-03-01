@@ -9,6 +9,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 using namespace glm;
@@ -54,7 +55,6 @@ namespace agl
    {
    }
 
-   // done
    bool PLYMesh::load(const std::string &filename)
    {
       int lineNumber = 0;
@@ -134,16 +134,62 @@ namespace agl
       return false;
    }
 
-   // todo
    glm::vec3 PLYMesh::minBounds() const
    {
-      return glm::vec3(0);
+      float min_x = 10000; // probably should set this to inf
+      float min_y = min_x;
+      float min_z = min_x;
+
+      for (int i = 0; i < numVertices() * 3; i += 3)
+      {
+         float x = positions()[i + 0];
+         if (x < min_x)
+         {
+            min_x = x;
+         }
+         float y = positions()[i + 1];
+         if (y < min_y)
+         {
+            min_y = y;
+         }
+         float z = positions()[i + 2];
+         if (z < min_z)
+         {
+            min_z = z;
+         }
+      }
+
+      glm::vec3 v(min_x, min_y, min_z);
+      return v;
    }
 
-   // todo
    glm::vec3 PLYMesh::maxBounds() const
    {
-      return glm::vec3(0);
+      float max_x = -10000; // probably should set this to -inf
+      float max_y = max_x;
+      float max_z = max_x;
+
+      for (int i = 0; i < numVertices() * 3; i += 3)
+      {
+         float x = positions()[i + 0];
+         if (x > max_x)
+         {
+            max_x = x;
+         }
+         float y = positions()[i + 1];
+         if (y > max_y)
+         {
+            max_y = y;
+         }
+         float z = positions()[i + 2];
+         if (z > max_z)
+         {
+            max_z = z;
+         }
+      }
+
+      glm::vec3 v(max_x, max_y, max_z);
+      return v;
    }
 
    int PLYMesh::numVertices() const
