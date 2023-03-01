@@ -89,12 +89,12 @@ namespace agl
             {
                if (tokenizedLine[1] == "vertex")
                {
-                  std::cout << tokenizedLine[2] << " vertices" << std::endl;
+                  // std::cout << tokenizedLine[2] << " vertices" << std::endl;
                   numV = stoi(tokenizedLine[2]);
                }
                if (tokenizedLine[1] == "face")
                {
-                  std::cout << tokenizedLine[2] << " faces" << std::endl;
+                  // std::cout << tokenizedLine[2] << " faces" << std::endl;
                   numF = stoi(tokenizedLine[2]);
                }
             }
