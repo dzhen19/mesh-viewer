@@ -50,9 +50,11 @@ namespace agl
       initBuffers(&_faces, &_positions, &_normals);
    }
 
-   // todo: check leaks
    PLYMesh::~PLYMesh()
    {
+      _positions.clear();
+      _faces.clear();
+      _normals.clear();
    }
 
    bool PLYMesh::load(const std::string &filename)
@@ -67,8 +69,9 @@ namespace agl
       string line;
       std::vector<std::string> tokenizedLine;
       ifstream myfile(filename);
-      int numV, numF;
-      int endHeaderLine;
+      int numV = 0;
+      int numF = 0;
+      int endHeaderLine = INT_MAX;
 
       if (myfile.is_open())
       {
