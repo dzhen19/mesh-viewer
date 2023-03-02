@@ -139,7 +139,7 @@ namespace agl
 
    glm::vec3 PLYMesh::minBounds() const
    {
-      float min_x = 10000; // probably should set this to inf
+      float min_x = INT_MAX; // probably should set this to inf
       float min_y = min_x;
       float min_z = min_x;
 
@@ -168,7 +168,7 @@ namespace agl
 
    glm::vec3 PLYMesh::maxBounds() const
    {
-      float max_x = -10000; // probably should set this to -inf
+      float max_x = -INT_MAX; // probably should set this to -inf
       float max_y = max_x;
       float max_z = max_x;
 

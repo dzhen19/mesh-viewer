@@ -57,9 +57,9 @@ public:
 
    vec3 getEyePos()
    {
-      return vec3(radius * sin(radians(azimuth)) * cos(radians(elevation)),
+      return vec3(radius * sin(radians(azimuth)) * std::max(cos(radians(elevation)), float(0.01)),
                   radius * sin(radians(elevation)),
-                  radius * cos(radians(azimuth)) * cos(radians(elevation)));
+                  radius * cos(radians(azimuth)) * std::max(cos(radians(elevation)), float(0.01)));
    }
 
    vec3 getUpPos()
@@ -107,10 +107,9 @@ public:
          return;
       }
 
-      std::cout << "elevation: " << elevation << " azimuth: " << azimuth << " radius: " << radius << std::endl;
-
+      // std::cout << "elevation: " << elevation << " azimuth: " << azimuth << " radius: " << radius << std::endl;
       float newAzimuth = azimuth + dx;
-      azimuth = std::max(std::min(newAzimuth, float(360)), float(0.1));
+      azimuth = std::max(std::min(newAzimuth, float(360)), float(0));
 
       float newElevation = elevation + dy;
       elevation = std::max(std::min(newElevation, float(90)), float(-90));
@@ -169,15 +168,17 @@ public:
    void draw()
    {
       eyePos = getEyePos();
-      up = getUpPos();
+      // didn't realize we didn't have to calculate up vector! oops
+      // up = getUpPos();
+      up = vec3(0, 1, 0);
 
       float aspect = ((float)width()) / height();
       renderer.perspective(glm::radians(60.0f), aspect, 0.1f, 50.0f);
       renderer.lookAt(eyePos, lookPos, up);
 
+      renderer.scale(vec3(scaleFactor, scaleFactor, scaleFactor));
       renderer.translate(vec3(translateX, translateY, translateZ));
       renderer.rotate(vec3(0, 0, 0));
-      renderer.scale(vec3(scaleFactor, scaleFactor, scaleFactor));
       renderer.mesh(mesh);
    }
 
