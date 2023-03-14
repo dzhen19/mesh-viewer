@@ -135,12 +135,12 @@ public:
 
    void keyUp(int key, int mods)
    {
-      int numFiles = getPathFromIndex(meshIdx).size();
+      int numFiles = GetFilenamesInDir("../models", "ply").size();
 
       // next
       if (key == 78)
       {
-         if (meshIdx == numFiles)
+         if (meshIdx == numFiles-1)
          {
             meshIdx = 0;
          }
