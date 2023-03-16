@@ -49,6 +49,8 @@ public:
    float elevation = 90;
 
    bool canRotate = false;
+   vector<string> shaders = {"normals", "phong-vertex", "phong-pixel"};
+   int currentShader = 0;
 
    MeshViewer() : Window()
    {
@@ -97,6 +99,10 @@ public:
       radius = 10;
       azimuth = 180;
       elevation = 90;
+
+      renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
+      renderer.loadShader("phong-pixel", "../shaders/phong-pixel.vs", "../shaders/phong-pixel.fs");
+      renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
    }
 
    // need to fix the math on this
@@ -107,7 +113,6 @@ public:
          return;
       }
 
-      // std::cout << "elevation: " << elevation << " azimuth: " << azimuth << " radius: " << radius << std::endl;
       float newAzimuth = azimuth + dx;
       azimuth = std::max(std::min(newAzimuth, float(360)), float(0));
 
@@ -140,7 +145,7 @@ public:
       // next
       if (key == 78)
       {
-         if (meshIdx == numFiles-1)
+         if (meshIdx == numFiles - 1)
          {
             meshIdx = 0;
          }
@@ -161,12 +166,35 @@ public:
             meshIdx--;
          }
       }
+      else if (key == 83)
+      {
+         if (currentShader == shaders.size() - 1)
+         {
+            currentShader = 0;
+         }
+         else
+         {
+            // change shader
+            currentShader++;
+         }
+      }
 
       setup();
    }
 
    void draw()
    {
+      renderer.beginShader(shaders[currentShader]);
+      renderer.setUniform("Light.La", vec3(.1, .1, .2));
+      renderer.setUniform("Light.Ld", vec3(.8, .8, 1.0));
+      renderer.setUniform("Light.Ls", vec3(.8, .8, 1.0));
+      renderer.setUniform("Light.Position", vec4(0.0, 100.0, 0, 1.0));
+
+      renderer.setUniform("Material.f", 3.0f);
+      renderer.setUniform("Material.Ka", vec3(.5));
+      renderer.setUniform("Material.Kd", vec3(.5));
+      renderer.setUniform("Material.Ks", vec3(1.0));
+
       eyePos = getEyePos();
       // didn't realize we didn't have to calculate up vector! oops
       // up = getUpPos();
@@ -180,13 +208,14 @@ public:
       renderer.translate(vec3(translateX, translateY, translateZ));
       renderer.rotate(vec3(0, 0, 0));
       renderer.mesh(mesh);
+      renderer.endShader();
    }
 
 protected:
    PLYMesh mesh;
    vec3 eyePos = getEyePos();
    vec3 lookPos = vec3(0, 0, 0);
-   vec3 up = getUpPos();
+   vec3 up = vec3(0, 1, 0);
 };
 
 int main(int argc, char **argv)

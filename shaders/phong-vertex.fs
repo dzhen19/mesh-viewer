@@ -1,8 +1,8 @@
 #version 400
 
 out vec4 FragColor;
+in vec3 LightIntensity;
 
-void main()
-{
-   FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+void main() {
+   FragColor = vec4(LightIntensity, 1.0);
 }
