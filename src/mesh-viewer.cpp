@@ -77,7 +77,8 @@ public:
    void setup()
    {
       PLYMesh newMesh;
-      newMesh.load(getPathFromIndex(meshIdx));
+      // newMesh.load(getPathFromIndex(meshIdx));
+      newMesh.load("../models/cow-uvs.ply");
       mesh = newMesh;
 
       // calculate translate based on model origin
@@ -103,6 +104,7 @@ public:
       renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
       renderer.loadShader("phong-pixel", "../shaders/phong-pixel.vs", "../shaders/phong-pixel.fs");
       renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
+      renderer.loadTexture("brick", "../textures/cow.png", 0);
    }
 
    // need to fix the math on this
@@ -185,14 +187,15 @@ public:
    void draw()
    {
       renderer.beginShader(shaders[currentShader]);
+      renderer.texture("image", "brick");
       renderer.setUniform("Light.La", vec3(.1, .1, .2));
       renderer.setUniform("Light.Ld", vec3(.8, .8, 1.0));
       renderer.setUniform("Light.Ls", vec3(.8, .8, 1.0));
-      renderer.setUniform("Light.Position", vec4(0.0, 100.0, 0, 1.0));
+      renderer.setUniform("Light.Position", vec4(0.0, 10.0, 0, 1.0));
 
       renderer.setUniform("Material.f", 3.0f);
-      renderer.setUniform("Material.Ka", vec3(.5));
-      renderer.setUniform("Material.Kd", vec3(.5));
+      renderer.setUniform("Material.Ka", vec3(.8));
+      renderer.setUniform("Material.Kd", vec3(.8));
       renderer.setUniform("Material.Ks", vec3(1.0));
 
       eyePos = getEyePos();

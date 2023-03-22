@@ -108,6 +108,8 @@ namespace agl
                endHeaderLine = lineNumber;
             }
 
+            int numTokens = tokenizedLine.size();
+
             // read #vertices lines of vertices
             if (lineNumber > endHeaderLine && lineNumber <= endHeaderLine + numV)
             {
@@ -118,6 +120,13 @@ namespace agl
                _normals.push_back(stof(tokenizedLine[3]));
                _normals.push_back(stof(tokenizedLine[4]));
                _normals.push_back(stof(tokenizedLine[5]));
+
+               // read uvs
+               if (numTokens == 8)
+               {
+                  _uvs.push_back(stof(tokenizedLine[6]));
+                  _uvs.push_back(stof(tokenizedLine[7]));
+               }
             }
 
             // read #faces lines of faces

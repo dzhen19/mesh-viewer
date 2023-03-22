@@ -56,8 +56,9 @@ namespace agl
       void init();
 
    protected:
-      std::vector<GLfloat> _positions;
       std::vector<GLfloat> _normals;
+      std::vector<GLfloat> _positions;
+      std::vector<GLfloat> _uvs;
       std::vector<GLuint> _faces;
    };
 }

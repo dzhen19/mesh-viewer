@@ -5,6 +5,8 @@ layout(location = 1) in vec3 vNormals;
 layout(location = 2) in vec2 vTextureCoords;
 
 out vec3 LightIntensity;
+out vec2 uv;
+out vec2 local;
 
 struct LightInfo {
    vec4 Position;
@@ -29,6 +31,9 @@ uniform mat4 MVP;
 uniform bool HasUV;
 
 void main() {
+   uv = vTextureCoords;
+   local = vPos.xy;
+
    // normal of the vertex 
    vec3 n = normalize(NormalMatrix * vNormals);
    vec4 eyeCoords = ModelViewMatrix * vec4(vPos, 1.0);
