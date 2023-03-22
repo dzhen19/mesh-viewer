@@ -2,50 +2,57 @@
 
 Implements a simple PLY viewer
 
-TODO: Add a representative image for your project here
+<img width="480" alt="shoeoncow" src="https://user-images.githubusercontent.com/55254786/226782400-a83cf8a9-bb17-4352-886a-d689c2103500.png">
 
-## How to build
+## Basic features
 
-*Windows*
-
-Open git bash to the directory containing this repository.
-
-```
-mesh-viewer $ mkdir build
-mesh-viewer $ cd build
-mesh-viewer/build $ cmake ..
-mesh-viewer/build $ start mesh-viewer.sln
-```
-
-Your solution file should contain two projects: `mesh-viewer` and `test-ply-mesh`.
-To run from the git bash command shell, 
-
-```
-mesh-viewer/build $ ../bin/Debug/test-ply-mesh.exe
-mesh-viewer/build $ ../bin/Debug/mesh-viewer.exe
-```
-
-*macOS*
-
-Open terminal to the directory containing this repository.
-
-```
-mesh-viewer $ mkdir build
-mesh-viewer $ cd build
-mesh-viewer/build $ cmake ..
-mesh-viewer/build $ make
-```
-
-To run each program from build, you would type
-
-```
-mesh-viewer/build $ ../bin/mesh-viewer
-```
-
-## Demo of basic features
-
-TODO: Document the core features of your viewer (shaders + models)
+- loading single meshes
+- browse through meshes in a folder by pressing "p" and "n"
+- rotate meshes using mouse drag
+- scaling meshes using scroll
+- phong per vertex and per pixel shading
+- "s" to iterate through shaders
 
 ## Unique features 
 
-TODO: Show the unique features you made
+- composite meshes and support for easy mesh manipulation
+```
+int cow_id = loadMesh("../models/cow.ply");
+scaleMesh(cow_id, .3);
+int copy_id;
+for (int i = 0; i < 10; i++)
+{
+   for (int j = 0; j < 10; j++)
+   {
+      copy_id = copyMesh(cow_id);
+      scaleMesh(copy_id, .3);
+      translateMesh(copy_id, vec3(i * 5, 0, j * 3));
+   }
+
+}
+ ```
+ 
+**Twilight of the Idols**
+
+<img width="585" alt="101_cows" src="https://user-images.githubusercontent.com/55254786/226783031-69a17243-380d-4977-96ea-7157387804f2.png">
+
+- texture support 
+
+**Textured Bovine**
+
+<img width="476" alt="textured_bovine" src="https://user-images.githubusercontent.com/55254786/226783186-7bd5fd60-e266-4101-a7e1-0b12fc71fec3.png">
+
+- distortion vertex shader
+```
+void main() {
+   _vNormal = vNormal;
+   vec3 v = cross(vNormal, vec3(1, 1, 0));
+   vec3 pos = vPos + v * sin(uTime) * .5;
+   gl_Position = MVP * vec4(pos, 1.0);
+}
+```
+
+![ezgif com-resize](https://user-images.githubusercontent.com/55254786/226784692-40e55dea-68c9-43a1-aff3-228a7e8c66b6.gif)
+![ezgif com-resize (1)](https://user-images.githubusercontent.com/55254786/226784918-438801d3-c535-4ad1-b44a-577133c6c899.gif)
+
+
