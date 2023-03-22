@@ -51,8 +51,10 @@ public:
 
    bool singleMeshBrowsing = true;
    bool canRotate = false;
-   vector<string> shaders = {"distort", "normals", "phong-vertex", "phong-pixel"};
+   vector<string> shaders = {"normals", "phong-vertex", "phong-pixel", "distort"};
+   vector<string> textures = {"brick", "cow"};
    int currentShader = 0;
+   int currentTexture = 0;
 
    MeshViewer() : Window()
    {
@@ -179,6 +181,7 @@ public:
       renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
       renderer.loadShader("distort", "../shaders/distort.vs", "../shaders/distort.fs");
       renderer.loadTexture("cow", "../textures/cow.png", 0);
+      renderer.loadTexture("brick", "../textures/brick.png", 0);
    }
 
    // need to fix the math on this
@@ -228,6 +231,18 @@ public:
             currentShader++;
          }
       }
+      else if (key == 84)
+      {
+         if (currentTexture == textures.size() - 1)
+         {
+            currentTexture = 0;
+         }
+         else
+         {
+            // change shader
+            currentTexture++;
+         }
+      }
 
       // disable mesh browsing if we have a custom scene
       if (!singleMeshBrowsing)
@@ -272,7 +287,7 @@ public:
    void draw()
    {
       renderer.beginShader(shaders[currentShader]);
-      renderer.texture("image", "cow");
+      renderer.texture("image", textures[currentTexture]);
       renderer.setUniform("Light.La", vec3(.1, .1, .2));
       renderer.setUniform("Light.Ld", vec3(.8, .8, 1.0));
       renderer.setUniform("Light.Ls", vec3(.8, .8, 1.0));
@@ -312,7 +327,6 @@ public:
    }
 
 protected:
-   // PLYMesh mesh;
    vector<TransformedMesh> transformedMeshes;
    vec3 eyePos = getEyePos();
    vec3 lookPos = vec3(0, 0, 0);
