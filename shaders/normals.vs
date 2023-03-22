@@ -6,6 +6,7 @@ layout(location = 2) in vec3 vUV;
 
 // pass normal to fragment shader
 out vec3 _vNormal;
+out vec3 local;
 
 uniform mat3 NormalMatrix;
 uniform mat4 ModelViewMatrix;

@@ -61,6 +61,14 @@ namespace agl
       std::vector<GLfloat> _uvs;
       std::vector<GLuint> _faces;
    };
+
+   struct TransformedMesh
+   {
+      glm::vec3 scale;
+      glm::vec3 translate;
+      glm::vec3 rotate;
+      PLYMesh mesh;
+   };
 }
 
 #endif

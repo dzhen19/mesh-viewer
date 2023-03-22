@@ -16,7 +16,8 @@ using namespace std;
 using namespace glm;
 using namespace agl;
 
-glm::vec3 crossProduct(vec3 a, vec3 b)
+glm::vec3
+crossProduct(vec3 a, vec3 b)
 {
    // (a2 * b3 – a3 * b2) * i + (a3 * b1 – a1 * b3) * j + (a1 * b2 – a2 * b1) * k,
    return vec3(
@@ -48,6 +49,7 @@ public:
    // in degrees [-90, 90]
    float elevation = 90;
 
+   bool singleMeshBrowsing = false;
    bool canRotate = false;
    vector<string> shaders = {"normals", "phong-vertex", "phong-pixel"};
    int currentShader = 0;
@@ -74,20 +76,21 @@ public:
       return yVec;
    }
 
-   void setup()
+   // returns index in transformedMeshes vector
+   int loadMesh(string path)
    {
-      PLYMesh newMesh;
-      // newMesh.load(getPathFromIndex(meshIdx));
-      newMesh.load("../models/cow-uvs.ply");
-      mesh = newMesh;
+      TransformedMesh transformedMesh;
+      PLYMesh mesh;
+      mesh.load(path);
 
-      // calculate translate based on model origin
       vec3 max = mesh.maxBounds();
       vec3 min = mesh.minBounds();
+
       float dx = max[0] - min[0];
       float dy = max[1] - min[1];
       float dz = max[2] - min[2];
 
+      // calculate translate based on model origin
       translateX = -(max[0] - (dx / 2));
       translateY = -(max[1] - (dy / 2));
       translateZ = -(max[2] - (dz / 2));
@@ -95,6 +98,80 @@ public:
       // calculate scale factor based on max bounds
       float maxD = std::max(dx, (std::max(dy, dz)));
       scaleFactor = 10 / maxD;
+
+      vec3 scale = vec3(scaleFactor, scaleFactor, scaleFactor);
+      vec3 translate = vec3(translateX, translateY, translateZ);
+      vec3 rotate = vec3(0, 0, 0);
+
+      transformedMesh = {scale, translate, rotate, mesh};
+      transformedMeshes.push_back(transformedMesh);
+
+      return transformedMeshes.size() - 1;
+   }
+
+   // inserts a copy of the transformedMesh into the meshes array
+   int copyMesh(int id)
+   {
+      TransformedMesh original = transformedMeshes[id];
+      TransformedMesh copy = {original.scale,
+                              original.translate,
+                              original.rotate,
+                              original.mesh};
+      transformedMeshes.push_back(copy);
+      return transformedMeshes.size() - 1;
+   }
+
+   // translate mesh by second param
+   void translateMesh(int id, vec3 translate)
+   {
+      transformedMeshes[id].translate += translate;
+   }
+
+   void scaleMesh(int id, float scale)
+   {
+      transformedMeshes[id].scale *= scale;
+   }
+
+   void rotateMesh(int id, vec3 rotate)
+   {
+      transformedMeshes[id].rotate += rotate;
+   }
+
+   void setup()
+   {
+      if (singleMeshBrowsing)
+      {
+         loadMesh(getPathFromIndex(meshIdx));
+      }
+      else
+      {
+         // custom scene definition
+
+         // shoeoncow
+         int cow_id = loadMesh("../models/cow.ply");
+         translateMesh(cow_id, vec3(0, 0, 0));
+         // scaleMesh(cow_id);
+
+         int shoe_id = loadMesh("../models/tennis_shoe.ply");
+         scaleMesh(shoe_id, .2);
+         translateMesh(shoe_id, vec3(8, -14, 5));
+
+         int shoe_copy = copyMesh(shoe_id);
+         translateMesh(shoe_copy, vec3(-25, 0, 1));
+
+         // 101 cows
+         // scaleMesh(cow_id, .3);
+         // int copy_id;
+         // for (int i = 0; i < 10; i++)
+         // {
+         //    for (int j = 0; j < 10; j++)
+         //    {
+         //       copy_id = copyMesh(cow_id);
+         //       scaleMesh(copy_id, .3);
+         //       translateMesh(copy_id, vec3(i * 5, 0, j * 3));
+         //    }
+         // }
+      }
 
       // reset eye position
       radius = 10;
@@ -142,6 +219,25 @@ public:
 
    void keyUp(int key, int mods)
    {
+      if (key == 83)
+      {
+         if (currentShader == shaders.size() - 1)
+         {
+            currentShader = 0;
+         }
+         else
+         {
+            // change shader
+            currentShader++;
+         }
+      }
+
+      // disable mesh browsing if we have a custom scene
+      if (!singleMeshBrowsing)
+      {
+         return;
+      }
+
       int numFiles = GetFilenamesInDir("../models", "ply").size();
 
       // next
@@ -168,19 +264,8 @@ public:
             meshIdx--;
          }
       }
-      else if (key == 83)
-      {
-         if (currentShader == shaders.size() - 1)
-         {
-            currentShader = 0;
-         }
-         else
-         {
-            // change shader
-            currentShader++;
-         }
-      }
 
+      transformedMeshes.clear();
       setup();
    }
 
@@ -199,23 +284,29 @@ public:
       renderer.setUniform("Material.Ks", vec3(1.0));
 
       eyePos = getEyePos();
-      // didn't realize we didn't have to calculate up vector! oops
-      // up = getUpPos();
       up = vec3(0, 1, 0);
 
       float aspect = ((float)width()) / height();
       renderer.perspective(glm::radians(60.0f), aspect, 0.1f, 50.0f);
       renderer.lookAt(eyePos, lookPos, up);
 
-      renderer.scale(vec3(scaleFactor, scaleFactor, scaleFactor));
-      renderer.translate(vec3(translateX, translateY, translateZ));
-      renderer.rotate(vec3(0, 0, 0));
-      renderer.mesh(mesh);
+      int numMeshes = transformedMeshes.size();
+      for (int i = 0; i < numMeshes; i++)
+      {
+         TransformedMesh m = transformedMeshes[i];
+         renderer.push();
+         renderer.scale(m.scale);
+         renderer.translate(m.translate);
+         renderer.rotate(m.rotate);
+         renderer.mesh(m.mesh);
+         renderer.pop();
+      }
       renderer.endShader();
    }
 
 protected:
-   PLYMesh mesh;
+   // PLYMesh mesh;
+   vector<TransformedMesh> transformedMeshes;
    vec3 eyePos = getEyePos();
    vec3 lookPos = vec3(0, 0, 0);
    vec3 up = vec3(0, 1, 0);
