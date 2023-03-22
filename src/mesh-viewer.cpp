@@ -149,9 +149,6 @@ public:
 
          // shoeoncow
          int cow_id = loadMesh("../models/cow.ply");
-         translateMesh(cow_id, vec3(0, 0, 0));
-         // scaleMesh(cow_id);
-
          int shoe_id = loadMesh("../models/tennis_shoe.ply");
          scaleMesh(shoe_id, .2);
          translateMesh(shoe_id, vec3(8, -14, 5));
@@ -160,17 +157,16 @@ public:
          translateMesh(shoe_copy, vec3(-25, 0, 1));
 
          // 101 cows
-         // scaleMesh(cow_id, .3);
-         // int copy_id;
-         // for (int i = 0; i < 10; i++)
-         // {
-         //    for (int j = 0; j < 10; j++)
-         //    {
-         //       copy_id = copyMesh(cow_id);
-         //       scaleMesh(copy_id, .3);
-         //       translateMesh(copy_id, vec3(i * 5, 0, j * 3));
-         //    }
-         // }
+         int copy_id;
+         for (int i = 0; i < 10; i++)
+         {
+            for (int j = 0; j < 10; j++)
+            {
+               copy_id = copyMesh(cow_id);
+               scaleMesh(copy_id, .3);
+               translateMesh(copy_id, vec3(i * 5, 0, j * 3));
+            }
+         }
       }
 
       // reset eye position
@@ -308,6 +304,11 @@ public:
          renderer.pop();
       }
       renderer.endShader();
+   }
+
+   ~MeshViewer()
+   {
+      transformedMeshes.clear();
    }
 
 protected:

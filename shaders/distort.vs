@@ -15,9 +15,7 @@ uniform float uTime;
 
 void main() {
    _vNormal = vNormal;
-
    vec3 v = cross(vNormal, vec3(1, 1, 0));
    vec3 pos = vPos + v * sin(uTime) * .5;
-
    gl_Position = MVP * vec4(pos, 1.0);
 }
