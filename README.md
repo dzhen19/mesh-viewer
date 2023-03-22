@@ -36,7 +36,7 @@ for (int i = 0; i < 10; i++)
 
 <img width="585" alt="101_cows" src="https://user-images.githubusercontent.com/55254786/226783031-69a17243-380d-4977-96ea-7157387804f2.png">
 
-- texture support 
+- texture support. Only the phong-vertex shader has support for textures. phong-vertex is the shader that is after the normals shader, which you can get to by pressing "s" to iterate through shaders. Then, once the phong-vertex shader is loaded, press "t" to switch between textures.
 
 **Textured Bovine**
 
