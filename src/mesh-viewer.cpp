@@ -51,7 +51,7 @@ public:
 
    bool singleMeshBrowsing = true;
    bool canRotate = false;
-   vector<string> shaders = {"normals", "phong-vertex", "phong-pixel", "distort"};
+   vector<string> shaders = {"normals", "phong-vertex", "phong-pixel", "distort", "colorshift"};
    vector<string> textures = {"brick", "cow"};
    int currentShader = 0;
    int currentTexture = 0;
@@ -179,6 +179,7 @@ public:
       renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
       renderer.loadShader("phong-pixel", "../shaders/phong-pixel.vs", "../shaders/phong-pixel.fs");
       renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
+      renderer.loadShader("colorshift", "../shaders/normals.vs", "../shaders/colorshift.fs");
       renderer.loadShader("distort", "../shaders/distort.vs", "../shaders/distort.fs");
       renderer.loadTexture("cow", "../textures/cow.png", 0);
       renderer.loadTexture("brick", "../textures/brick.png", 0);
